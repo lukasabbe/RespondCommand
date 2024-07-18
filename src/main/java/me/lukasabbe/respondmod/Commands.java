@@ -9,30 +9,32 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class Commands {
     public static void rCommand(CommandDispatcher<ServerCommandSource> serverCommandSourceCommandDispatcher, CommandRegistryAccess commandRegistryAccess, CommandManager.RegistrationEnvironment registrationEnvironment) {
         serverCommandSourceCommandDispatcher.register(CommandManager.literal("r").then(CommandManager.argument("respond", MessageArgumentType.message()).executes(ctx->{
-            if(!ctx.getSource().isExecutedByPlayer()) {
-                ctx.getSource().sendError(Text.literal("You can't respond as the console"));
+            final ServerCommandSource source = ctx.getSource();
+            if(!source.isExecutedByPlayer()) {
+                source.sendError(Text.literal("You can't respond as the console"));
                 return 0;
             }
-            ServerPlayerEntity player = ctx.getSource().getPlayer();
+            ServerPlayerEntity player = source.getPlayer();
             if(!RespondMod.latestSend.containsKey(player.getUuid())) {
-                ctx.getSource().sendError(Text.literal("You have no one to respond to"));
+                source.sendError(Text.literal("You have no one to respond to"));
                 return 0;
             }
             try{
-                ServerPlayerEntity reciver = ctx.getSource().getPlayer().getServerWorld().getPlayers(t -> t.getUuid() == RespondMod.latestSend.get(player.getUuid())).getFirst();
+                ServerPlayerEntity receiver = player
+                        .getServerWorld()
+                        .getPlayers(t -> t.getUuid() == RespondMod.latestSend.get(player.getUuid()))
+                        .getFirst();
                 MessageArgumentType.getSignedMessage(ctx,"respond",signedMessage ->
-                        MessageCommandInvoker.execute(ctx.getSource(), Collections.singleton(reciver),signedMessage));
+                        MessageCommandInvoker.execute(source, Collections.singleton(receiver),signedMessage));
                 return 1;
             }catch (NoSuchElementException ignore){
-                ctx.getSource().sendError(Text.literal("The player is not online"));
+                source.sendError(Text.literal("The player is not online"));
                 return 0;
             }
         })));

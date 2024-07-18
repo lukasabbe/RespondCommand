@@ -3,8 +3,8 @@
   "id": "respondmod",
   "version": "${version}",
   "name": "RespondMod",
-  "description": "",
-  "authors": [],
+  "description": "Add an /r command to your server. You can respond to the latest msg you got with /r",
+  "authors": ["Lukasabbe"],
   "contact": {
     "repo": "https://github.com/lukas/RespondMod"
   },
