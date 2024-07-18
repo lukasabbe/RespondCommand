@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.lukasabbe.respondmod.mixins",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "MessageCommandInvoker",
+    "MessageCommandMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

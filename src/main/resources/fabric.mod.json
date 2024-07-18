@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "respondmod",
+  "version": "${version}",
+  "name": "RespondMod",
+  "description": "",
+  "authors": [],
+  "contact": {
+    "repo": "https://github.com/lukas/RespondMod"
+  },
+  "license": "MIT",
+  "icon": "assets/respondmod/icon.png",
+  "environment": "server",
+  "entrypoints": {
+    "server": [
+      "me.lukasabbe.respondmod.RespondMod"
+    ]
+  },
+  "mixins": [
+    "respondmod.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
