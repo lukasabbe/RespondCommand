@@ -9,8 +9,10 @@ import java.util.UUID;
 
 public class RespondMod implements DedicatedServerModInitializer {
     public static Map<UUID,UUID> latestSend = new HashMap<>();
+
     @Override
     public void onInitializeServer() {
-        CommandRegistrationCallback.EVENT.register(Commands::rCommand);
+        RespondCommand command = new RespondCommand();
+        CommandRegistrationCallback.EVENT.register(command::rCommand);
     }
 }
