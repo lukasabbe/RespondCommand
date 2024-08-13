@@ -3,35 +3,31 @@ package me.lukasabbe.respondmod;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import me.lukasabbe.respondmod.mixins.MessageCommandInvoker;
-import net.minecraft.command.CommandRegistryAccess;
-import net.minecraft.command.argument.MessageArgumentType;
+import net.minecraft.command.arguments.MessageArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
+import net.minecraft.text.Texts;
+import net.minecraft.text.TranslatableText;
+import net.minecraft.util.Formatting;
 
-import java.util.Collections;
 import java.util.NoSuchElementException;
 
 public class RespondCommand {
-    public void rCommand(CommandDispatcher<ServerCommandSource> serverCommandSourceCommandDispatcher, CommandRegistryAccess commandRegistryAccess, CommandManager.RegistrationEnvironment registrationEnvironment) {
-        serverCommandSourceCommandDispatcher.register(CommandManager
+    public void rCommand(CommandDispatcher<ServerCommandSource> dispatcher, boolean b) {
+        dispatcher.register(CommandManager
                 .literal("r")
                 .then(CommandManager
                         .argument("respond", MessageArgumentType.message())
                         .executes(this::run)));
     }
 
-    private int run(CommandContext<ServerCommandSource> ctx) {
+    private int run(CommandContext<ServerCommandSource> ctx) throws CommandSyntaxException {
         final ServerCommandSource source = ctx.getSource();
-        if(!source.isExecutedByPlayer()) {
-            source.sendError(Text.literal("You can't respond as the console"));
-            return 0;
-        }
         ServerPlayerEntity player = source.getPlayer();
         if(!RespondMod.latestSend.containsKey(player.getUuid())) {
-            source.sendError(Text.literal("You have no one to respond to"));
+            source.sendError(Texts.toText(() -> "You have no one to respond to"));
             return 0;
         }
         try{
@@ -39,14 +35,16 @@ public class RespondCommand {
                     .getServerWorld()
                     .getPlayers(t -> t.getUuid() == RespondMod.latestSend.get(player.getUuid()))
                     .getFirst();
-            MessageArgumentType.getSignedMessage(ctx,"respond",signedMessage ->
-                    MessageCommandInvoker.execute(source, Collections.singleton(receiver),signedMessage));
+            Text respond = MessageArgumentType.getMessage(ctx,"respond");
+            receiver.sendMessage((new TranslatableText("commands.message.display.incoming", source.getDisplayName(), respond.deepCopy())).formatted(Formatting.GRAY, Formatting.ITALIC));
+            source.sendFeedback((new TranslatableText("commands.message.display.outgoing", receiver.getDisplayName(), respond.deepCopy())).formatted(Formatting.GRAY, Formatting.ITALIC), false);
             return 1;
         }catch (NoSuchElementException ignore){
-            source.sendError(Text.literal("The player is not online"));
+            source.sendError(Texts.toText(()->"The player is not online"));
             return 0;
         } catch (CommandSyntaxException e) {
             throw new RuntimeException(e);
         }
     }
+
 }
