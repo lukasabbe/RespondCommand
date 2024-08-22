@@ -36,7 +36,7 @@ public class RespondCommand {
         }
         try{
             ServerPlayerEntity receiver = player
-                    .getWorld()
+                    .getServerWorld()
                     .getPlayers(t -> t.getUuid() == RespondMod.latestSend.get(player.getUuid()))
                     .getFirst();
             MessageArgumentType.getSignedMessage(ctx,"respond",signedMessage ->
