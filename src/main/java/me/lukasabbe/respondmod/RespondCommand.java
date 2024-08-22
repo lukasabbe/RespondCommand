@@ -11,7 +11,6 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.NoSuchElementException;
 
@@ -40,8 +39,9 @@ public class RespondCommand {
                     .getWorld()
                     .getPlayers(t -> t.getUuid() == RespondMod.latestSend.get(player.getUuid()))
                     .getFirst();
-            MessageArgumentType.SignedMessage signedMessage = MessageArgumentType.getSignedMessage(ctx,"respond");
-            return MessageCommandInvoker.execute(source, Collections.singleton(receiver),signedMessage);
+            MessageArgumentType.getSignedMessage(ctx,"respond",signedMessage ->
+                    MessageCommandInvoker.execute(source, Collections.singleton(receiver),signedMessage));
+            return 1;
         }catch (NoSuchElementException ignore){
             source.sendError(Text.literal("The player is not online"));
             return 0;
