@@ -3,7 +3,7 @@ package me.lukasabbe.respondmod;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.arguments.MessageArgumentType;
+import net.minecraft.command.argument.MessageArgumentType;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -36,8 +36,8 @@ public class RespondCommand {
                     .getPlayers(t -> t.getUuid() == RespondMod.latestSend.get(player.getUuid()))
                     .getFirst();
             Text respond = MessageArgumentType.getMessage(ctx,"respond");
-            receiver.sendMessage((new TranslatableText("commands.message.display.incoming", source.getDisplayName(), respond.deepCopy())).formatted(Formatting.GRAY, Formatting.ITALIC));
-            source.sendFeedback((new TranslatableText("commands.message.display.outgoing", receiver.getDisplayName(), respond.deepCopy())).formatted(Formatting.GRAY, Formatting.ITALIC), false);
+            receiver.sendSystemMessage((new TranslatableText("commands.message.display.incoming", receiver.getDisplayName(), respond)).formatted(Formatting.GRAY,Formatting.ITALIC),player.getUuid());
+            source.sendFeedback((new TranslatableText("commands.message.display.outgoing", receiver.getDisplayName(), respond)).formatted(Formatting.GRAY, Formatting.ITALIC), false);
             return 1;
         }catch (NoSuchElementException ignore){
             source.sendError(Texts.toText(()->"The player is not online"));
