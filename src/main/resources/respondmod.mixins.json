@@ -4,6 +4,7 @@
   "package": "me.lukasabbe.respondmod.mixins",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "MessageCommandInvoker",
     "MessageCommandMixin"
   ],
   "client": [

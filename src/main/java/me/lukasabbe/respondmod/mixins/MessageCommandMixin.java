@@ -2,6 +2,7 @@ package me.lukasabbe.respondmod.mixins;
 
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import me.lukasabbe.respondmod.RespondMod;
+import net.minecraft.command.argument.MessageArgumentType;
 import net.minecraft.server.command.MessageCommand;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -16,9 +17,7 @@ import java.util.Collection;
 @Mixin(MessageCommand.class)
 public class MessageCommandMixin {
     @Inject(method = "execute", at=@At("HEAD"))
-    private static void execute(ServerCommandSource source, Collection<ServerPlayerEntity> targets, Text message, CallbackInfoReturnable<Integer> cir) {
-        try{
-            RespondMod.latestSend.put(targets.iterator().next().getUuid(), source.getPlayer().getUuid());
-        }catch (CommandSyntaxException ignored){}
+    private static void execute(ServerCommandSource source, Collection<ServerPlayerEntity> targets, MessageArgumentType.SignedMessage signedMessage, CallbackInfoReturnable<Integer> cir) {
+        RespondMod.latestSend.put(targets.iterator().next().getUuid(), source.getPlayer().getUuid());
     }
 }
